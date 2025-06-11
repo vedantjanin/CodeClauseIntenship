@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getEmployees, createEmployee, updateEmployee, deleteEmployee } from '../api'; // Adjusted path
+import { getEmployees, createEmployee, updateEmployee, deleteEmployee } from '../api';
 import EmployeeForm from './EmployeeForm';
 import EmployeeList from './EmployeeList';
 
@@ -13,8 +13,7 @@ const Home = () => {
       const { data } = await getEmployees();
       setEmployees(data);
     } catch (err) {
-      console.error('Failed to fetch employees:', err.message);
-      setError('Failed to fetch employee data. Make sure the backend server is running.');
+      setError('Failed to load employees');
     }
   };
 
@@ -22,36 +21,26 @@ const Home = () => {
     fetchData();
   }, []);
 
-  const handleCreateOrUpdate = async (empData) => {
-    try {
-      if (editing) {
-        await updateEmployee(editing._id, empData);
-        setEditing(null);
-      } else {
-        await createEmployee(empData);
-      }
-      fetchData();
-    } catch (err) {
-      console.error('Failed to save employee:', err.message);
-      setError('Failed to save employee data.');
-    }
+  const handleSubmit = async (empData) => {
+    editing
+      ? await updateEmployee(editing._id, empData)
+      : await createEmployee(empData);
+    setEditing(null);
+    fetchData();
   };
 
   const handleDelete = async (id) => {
-    try {
-      await deleteEmployee(id);
-      fetchData();
-    } catch (err) {
-      console.error('Failed to delete employee:', err.message);
-      setError('Failed to delete employee.');
-    }
+    await deleteEmployee(id);
+    fetchData();
   };
 
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4">Employee Management</h2>
-      {error && <div className="alert alert-danger">{error}</div>}
-      <EmployeeForm onSubmit={handleCreateOrUpdate} initialData={editing} />
+     <div className="container mt-4">
+    <h1 className="text-center mb-4">
+      Employee Management System
+    </h1>
+
+      <EmployeeForm onSubmit={handleSubmit} initialData={editing} onCancel={() => setEditing(null)} />
       <EmployeeList employees={employees} onEdit={setEditing} onDelete={handleDelete} />
     </div>
   );

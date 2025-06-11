@@ -1,30 +1,50 @@
 import React from 'react';
+import { Table, Button } from 'react-bootstrap';
 
 const EmployeeList = ({ employees, onEdit, onDelete }) => {
+  if (!employees.length) {
+    return <p className="text-center">No employees found.</p>;
+  }
+
   return (
-    <table className="table table-bordered">
+    <Table striped bordered hover responsive className="text-center">
       <thead>
         <tr>
           <th>Name</th>
-          <th>Role</th>
-          <th>Salary</th>
+          <th>Position</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        {employees.map((emp) => (
+        {employees.map(emp => (
           <tr key={emp._id}>
-            <td>{emp.name}</td>
-            <td>{emp.role}</td>
-            <td>{emp.salary}</td>
+            <td className="align-middle">{emp.name}</td>
+            <td className="align-middle">{emp.position}</td>
             <td>
-              <button className="btn btn-warning btn-sm me-2" onClick={() => onEdit(emp)}>Edit</button>
-              <button className="btn btn-danger btn-sm" onClick={() => onDelete(emp._id)}>Delete</button>
+              <Button
+                variant="warning"
+                size="sm"
+                className="me-2"
+                onClick={() => onEdit(emp)}
+              >
+                Edit
+              </Button>
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={() => {
+                  if (window.confirm(`Delete ${emp.name}?`)) {
+                    onDelete(emp._id);
+                  }
+                }}
+              >
+                Delete
+              </Button>
             </td>
           </tr>
         ))}
       </tbody>
-    </table>
+    </Table>
   );
 };
 
